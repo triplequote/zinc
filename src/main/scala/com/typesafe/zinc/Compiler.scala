@@ -7,7 +7,8 @@ package com.typesafe.zinc
 import java.io.File
 import java.net.URLClassLoader
 import sbt.{ ClasspathOptions, CompileOptions, CompileSetup, LoggerReporter, ScalaInstance }
-import sbt.compiler.{ AggressiveCompile, AnalyzingCompiler, CompilerCache, CompileOutput, IC }
+import sbt.compiler.{ AggressiveCompile, AnalyzingCompiler, CompilerCache, CompileOutput}
+import sbt.triplequote.hydra.IC
 import sbt.inc.{ Analysis, AnalysisStore, FileBasedStore }
 import sbt.Path._
 import xsbti.compile.{ JavaCompiler, GlobalsCache }
@@ -189,6 +190,12 @@ class Compiler(scalac: AnalyzingCompiler, javac: JavaCompiler) {
     compile(inputs, cwd, reporter, progress = None)(log)
   }
 
+  private def extract(previous: Option[(Analysis, CompileSetup)], incOptions: sbt.inc.IncOptions): (Analysis, Option[CompileSetup]) =
+    previous match {
+      case Some((an, setup)) => (an, Some(setup))
+      case None              => (Analysis.Empty/*(nameHashing = incOptions.nameHashing)*/, None)
+    }
+
   /**
    * Run a compile. The resulting analysis is also cached in memory.
    */
@@ -196,7 +203,6 @@ class Compiler(scalac: AnalyzingCompiler, javac: JavaCompiler) {
     import inputs._
     if (forceClean && Compiler.analysisIsEmpty(cacheFile)) Util.cleanAllClasses(classesDirectory)
     val getAnalysis: File => Option[Analysis] = analysisMap.get _
-    val aggressive    = new AggressiveCompile(cacheFile)
     val cp            = autoClasspath(classesDirectory, scalac.scalaInstance.allJars, javaOnly, classpath)
     val compileOutput = CompileOutput(classesDirectory)
     val globalsCache  = Compiler.residentCache
@@ -204,7 +210,28 @@ class Compiler(scalac: AnalyzingCompiler, javac: JavaCompiler) {
     val incOpts       = incOptions.options
     val compileSetup  = new CompileSetup(compileOutput, new CompileOptions(scalacOptions, javacOptions), scalac.scalaInstance.actualVersion, compileOrder, incOpts.nameHashing)
     val analysisStore = Compiler.analysisStore(cacheFile)
-    val analysis      = aggressive.compile1(sources, cp, compileSetup, progress, analysisStore, getAnalysis, definesClass, scalac, javac, reporter, skip, globalsCache, incOpts)(log)
+
+    val (previousAnalysis, previousSetup) = extract(analysisStore.get(), incOpts)
+
+    val IC.Result(analysis, _, _)      = IC.incrementalCompile(
+      scalac,
+      javac,
+      sources,
+      cp,
+      compileOutput,
+      globalsCache,
+      progress,
+      scalacOptions,
+      javacOptions,
+      previousAnalysis,
+      previousSetup,
+      getAnalysis,
+      definesClass,
+      reporter,
+      compileOrder,
+      skip,
+      incOpts)(log)
+      //aggressive.compile1(sources, cp, compileSetup, progress, analysisStore, getAnalysis, definesClass, scalac, javac, reporter, skip, globalsCache, incOpts)(log)
     if (mirrorAnalysis) {
       SbtAnalysis.printRelations(analysis, Some(new File(cacheFile.getPath() + ".relations")), cwd)
     }

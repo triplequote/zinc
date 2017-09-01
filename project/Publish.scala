@@ -13,16 +13,17 @@ object Publish {
     publishLocally := false,
     publishTo := Some(
       if (publishLocally.value) Opts.resolver.mavenLocalFile
-      else if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
-      else Opts.resolver.sonatypeStaging),
-    credentials += Credentials(Path.userHome / ".ivy2" / "sonatype-credentials"),
+      else "Triplequote Staging Repo" at "https://repo.triplequote.com/artifactory/libs-release-staging"),
+//      else if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
+//      else Opts.resolver.sonatypeStaging),
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     publishArtifact in Test := false,
     homepage := Some(url("https://github.com/typesafehub/zinc")),
     licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     pomExtra := {
       <scm>
         <url>https://github.com/typesafehub/zinc</url>
-        <connection>scm:git:git@github.com:typesafehub/zinc.git</connection>
+        <connection>scm:git:git@github.com:triplequote/zinc.git</connection>
       </scm>
       <developers>
         <developer>
@@ -34,6 +35,11 @@ object Publish {
           <id>pvlugter</id>
           <name>Peter Vlugter</name>
           <url>https://github.com/pvlugter</url>
+        </developer>
+        <developer>
+          <id>dragos</id>
+          <name>Iulian Dragos</name>
+          <url>https://github.com/dragos</url>
         </developer>
       </developers>
     },

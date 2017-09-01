@@ -6,7 +6,7 @@ val resolveSbtLocally = settingKey[Boolean]("resolve-sbt-locally")
 
 lazy val zinc = (project in file(".")).
   settings(inThisBuild(List(
-      organization := "com.typesafe.zinc",
+      organization := "com.triplequote.zinc",
       version := zincVersion,
       scalaVersion := "2.10.6"
     )),
@@ -16,6 +16,7 @@ lazy val zinc = (project in file(".")).
     Scriptit.settings,
     crossPaths := false,
     resolveSbtLocally := false,
+    unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "sbt-0.13.13",
     libraryDependencies ++= Seq(
       "com.typesafe.sbt" % "incremental-compiler" % sbtVersionToUse,
       "com.typesafe.sbt" % "compiler-interface" % sbtVersionToUse classifier "sources",
