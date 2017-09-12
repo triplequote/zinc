@@ -1,6 +1,6 @@
 val sbtPatchVersion = "13"
 val sbtVersionToUse = s"0.13.$sbtPatchVersion"
-val zincVersion = s"0.3.$sbtPatchVersion"
+val zincVersion = s"0.5.$sbtPatchVersion"
 
 val resolveSbtLocally = settingKey[Boolean]("resolve-sbt-locally")
 
