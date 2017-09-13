@@ -213,7 +213,7 @@ class Compiler(scalac: AnalyzingCompiler, javac: JavaCompiler) {
 
     val (previousAnalysis, previousSetup) = extract(analysisStore.get(), incOpts)
 
-    val IC.Result(analysis, _, _)      = IC.incrementalCompile(
+    val IC.Result(analysis, _, hasModified)      = IC.incrementalCompile(
       scalac,
       javac,
       sources,
@@ -236,6 +236,8 @@ class Compiler(scalac: AnalyzingCompiler, javac: JavaCompiler) {
       SbtAnalysis.printRelations(analysis, Some(new File(cacheFile.getPath() + ".relations")), cwd)
     }
     SbtAnalysis.printOutputs(analysis, outputRelations, outputProducts, cwd, classesDirectory)
+    if (hasModified)
+      analysisStore.set(analysis, compileSetup)
     analysis
   }
 
