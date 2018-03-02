@@ -36,7 +36,13 @@ Newer distributions are hosted under [Lightbend downloads].
 [old zinc repo]: http://repo.typesafe.com/typesafe/zinc/com/typesafe/zinc/dist/
 [Typesafe downloads]: http://downloads.typesafe.com/zinc/
 
-Here's the table of final releases in 0.3.x series:
+Here's the table of Triplequote Zinc releases:
+
+| zinc version | sbt version | Download                                                                        |
+|--------------|-------------|---------------------------------------------------------------------------------|
+| 0.6.13       | 0.13.13     | [zinc-0.6.13.tgz](https://repo.triplequote.com/artifactory/distribution/zinc/zinc-0.6.13.zip)    |
+
+Here's the table of final releases in 0.3.x series. Note that these servers may not work with the Triplequote Hydra parallel Scala compiler.
 
 | zinc version | sbt version | Download                                                                        |
 |--------------|-------------|---------------------------------------------------------------------------------|
