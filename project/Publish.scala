@@ -13,7 +13,7 @@ object Publish {
     publishLocally := false,
     publishTo := Some(
       if (publishLocally.value) Opts.resolver.mavenLocalFile
-      else "Triplequote Staging Repo" at "https://repo.triplequote.com/artifactory/libs-release-staging"),
+      else "Triplequote Repo" at "https://repo.triplequote.com/artifactory/libs-release"),
 //      else if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
 //      else Opts.resolver.sonatypeStaging),
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
