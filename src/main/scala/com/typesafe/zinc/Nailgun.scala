@@ -92,7 +92,7 @@ object Nailgun {
    * Run the zinc compile command, from the actual working directory.
    */
   def zinc(context: NGContext): Unit = {
-    Main.run(context.getArgs, Some(new File(context.getWorkingDirectory)))
+    Main.run(context.getArgs, Some(new File(context.getWorkingDirectory)), context.out)
   }
 
   /**

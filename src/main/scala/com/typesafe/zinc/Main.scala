@@ -5,6 +5,8 @@
 package com.typesafe.zinc
 
 import java.io.File
+import java.io.PrintStream
+
 import sbt.Level
 import xsbti.CompileFailed
 
@@ -14,10 +16,13 @@ import xsbti.CompileFailed
 object Main {
   def main(args: Array[String]): Unit = run(args, None)
 
+  def run(args: Array[String], cwd: Option[File]): Unit =
+    run(args, cwd, System.out)
+
   /**
    * Compile run. Current working directory can be provided (for nailed zinc).
    */
-  def run(args: Array[String], cwd: Option[File]): Unit = {
+  def run(args: Array[String], cwd: Option[File], outStream: PrintStream): Unit = {
     val startTime = System.currentTimeMillis
 
     val Parsed(rawSettings, residual, errors) = Settings.parse(args)
@@ -28,7 +33,7 @@ object Main {
     // if nailed then also set any system properties provided
     if (cwd.isDefined) Util.setProperties(settings.properties)
 
-    val log = Util.logger(settings.quiet, settings.logLevel, settings.color)
+    val log = Util.logger(settings.quiet, settings.logLevel, settings.color, outStream)
     val isDebug = (!settings.quiet && settings.logLevel == Level.Debug)
 
     // bail out on any command-line option errors

@@ -5,7 +5,9 @@
 package com.typesafe.zinc
 
 import java.io.File
-import sbt.{ ConsoleLogger, Hash, IO, Level, Logger }
+import java.io.PrintStream
+
+import sbt.{ConsoleLogger, ConsoleOut, Hash, IO, Level, Logger}
 
 object Util {
 
@@ -16,11 +18,15 @@ object Util {
   /**
    * Create a new logger based on quiet, level, and color settings.
    */
-  def logger(quiet: Boolean, level: Level.Value, color: Boolean): Logger = {
+  def logger(quiet: Boolean, level: Level.Value, color: Boolean, outStream: PrintStream): Logger = {
     if (quiet) {
       new SilentLogger
     } else {
-      val log = ConsoleLogger(useColor = ConsoleLogger.formatEnabled && color); log.setLevel(level); log
+      val log = ConsoleLogger(
+        out = ConsoleOut.printStreamOut(outStream),
+        useColor = ConsoleLogger.formatEnabled && color);
+      log.setLevel(level);
+      log
     }
   }
 
